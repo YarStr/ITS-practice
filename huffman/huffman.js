@@ -22,11 +22,25 @@ for (i = 0 ; i < inputData.length; i++){
 	alphabet[inputData.charAt(i)] = 0;
 }
 
+
 //Сопоставление символов алфавита с их частотой
 for (i = 0 ; i < inputData.length; i++){
 	alphabet[inputData.charAt(i)]++;
 }
 
+//Обработка случая, когда в строке встречается только один символ
+let count = 0;
+for (i in alphabet){
+    count++;
+}
+if (count == 1){
+    for (i in alphabet){
+        console.log('Коды символов:\n', i, '0');
+    }
+}
+
+//Обработка остальных случаев
+else {
 //Внесение символов алфавита в дерево в качестве листьев
 for (i in alphabet){
     let n = new Node(i, alphabet[i], 0, null, '');
@@ -97,4 +111,4 @@ for (i in alphabet){
 
     console.log(i, codeOfSymb)
 }
-
+}
