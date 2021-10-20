@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hamming code</title>
+        <script>
+            function code(){
+                let message = document.getElementById("inputData").value;
+                let inputDigits = message.split('')
+                for (let i = 0; i < inputDigits.length; i++){
+                    inputDigits[i] *= 1;
+                }
+                inputDigits.push((inputDigits[0] + inputDigits[2] + inputDigits[3]) % 2);
+                inputDigits.push((inputDigits[0] + inputDigits[1] + inputDigits[3]) % 2);
+                inputDigits.push((inputDigits[1] + inputDigits[2] + inputDigits[3]) % 2);
+                document.getElementById("codedData").value = inputDigits.join('');
+            }
+
+            function decode(){
+                let message = document.getElementById("codedData").value;
+                let inputDigits = message.split('')
+                for (let i = 0; i < inputDigits.length; i++){
+                    inputDigits[i] *= 1;
+                }
+                //Массив для хранения информации о возможных ошибках
+                let errors = new Array(7).fill('empty');
+
+                function checkForErrors(bit1, bit2, bit3, parityBit, errors){
+
+                    //Проверка чётности суммы битов из одного круга, согласно кодированию по Хэммингу
+                    parityCheck = (inputDigits[bit1] + inputDigits[bit2] + inputDigits[bit3] + inputDigits[parityBit]) % 2;
+                    
+                    //Массив битов из одного круга, согласно кодированию по Хэммингу
+                    circleOfBites = [bit1, bit2, bit3, parityBit];
+
+                    //Заполнение массива ошибок в зависимости от чётности суммы битов одного круга
+                    for (i in circleOfBites){
+                        if (errors[circleOfBites[i]] === 'empty'){
+                            errors[circleOfBites[i]] = parityCheck;
+                        }
+                        else {
+                            if (errors[circleOfBites[i]] == 0 || parityCheck == 0){
+                                errors[circleOfBites[i]] = 0;
+                            }
+                            else{
+                                errors[circleOfBites[i]] += parityCheck;
+                            }
+                        }
+                    }
+                    return errors   
+                }
+
+                //Последовательная проверка на ошибки трёх кругов, согласно кодированию по Хэммингу
+                errors = checkForErrors(0, 2, 3, 4, errors);
+                errors = checkForErrors(0, 1, 3, 5, errors);
+                errors = checkForErrors(1, 2, 3, 6, errors);
+                //В результате в массиве ошибок под индексом ошибочного элемента будет находится наибольшее число
+
+                //Обработка случаев наличия и отстутствия ошибок
+                if (errors.every(elem => elem == 0)){
+                    document.getElementById("decodedText").innerHTML = 'Ошибок не обнаружено';
+                }
+                else{
+                    //Нахождение ошибочного элемента
+                    errorBit = errors.indexOf(Math.max.apply(null, errors));
+
+                    //Исправление ошибочного элемента
+                    inputDigits[errorBit] = (inputDigits[errorBit] + 1) % 2;
+                    
+                    errorBit++;
+                    let bitType = '';
+                    if (errorBit < 5){
+                        bitType = 'информационном';
+                    }
+                    else {
+                        errorBit -= 4;
+                        bitType = 'контрольном';
+                    }   
+                    document.getElementById("decodedText").innerHTML = 'Ошибка в ' + bitType + ' бите №' + String(errorBit);
+                }
+                document.getElementById("decodedData").value = inputDigits.join('');
+            }
+        </script>
+    </head>
+
+    <body>
+        <p> <input type="text" id="inputData" maxlength="4" /> input data</p>
+        <p> <input type="button" onclick="code()" value="Code" /></p>
+
+        <p> <input type="text" id="codedData" maxlength="7" /> coded data</p>
+        <p> <input type="button" onclick="decode()" value="Decode" /></p>
+        
+        <p> <input type="text" id="decodedData" /> decoded data</p>
+        <p id="decodedText"></p>
+    </body>
+</html>
