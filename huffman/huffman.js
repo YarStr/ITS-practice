@@ -17,11 +17,12 @@ function Node(letter, frequency, used, parent, code){
 //Считывание строки из файла
 inputData = fs.readFileSync(arg[2]).toString();
 
+console.log('• Полученная строка: ', inputData);
+
 //Создание алфавита символов строки
 for (i = 0 ; i < inputData.length; i++){
 	alphabet[inputData.charAt(i)] = 0;
 }
-
 
 //Сопоставление символов алфавита с их частотой
 for (i = 0 ; i < inputData.length; i++){
@@ -35,7 +36,8 @@ for (i in alphabet){
 }
 if (count == 1){
     for (i in alphabet){
-        console.log('Коды символов:\n', i, '0');
+        alphabet[i] = 0;
+        console.log('Коды символов:\n-', i, '0');
     }
 }
 
@@ -95,7 +97,7 @@ while (tree.some(elem => elem.used == false)){
     tree.push(n);   
 }
 
-console.log('Коды символов:')
+console.log('• Коды символов:')
 for (i in alphabet){
     let codeOfSymb = '';
     let j = 0;
@@ -109,6 +111,29 @@ for (i in alphabet){
         j = tree[j].parent;
     } while ((tree[j].parent != null))
 
-    console.log(i, codeOfSymb)
+    alphabet[i] = codeOfSymb;
+    console.log('-', i, alphabet[i])
 }
 }
+
+//Кодирование входной строки
+let codedData = inputData;
+for (i in alphabet){
+    codedData = codedData.replace(RegExp(i, 'g'), alphabet[i]);
+}
+console.log('• Закодированная строка: ', codedData);
+
+//Декодирование закодированной строки
+let decodedData = '';
+let symbol = ''
+for (i in codedData){
+    symbol += codedData[i];
+    for (j in alphabet){
+        if (symbol == alphabet[j]){
+            decodedData += j;
+            symbol = '';
+            break
+        }
+    }
+}
+console.log('• Раскодированная строка: ', decodedData)
