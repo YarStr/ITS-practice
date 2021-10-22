@@ -4,6 +4,7 @@ let arg = process.argv;
 let i = 0;
 let tree = new Array();
 let alphabet = new Array();
+let codesOfSymbols = {};
 
 //Функция создания узла дерева
 function Node(letter, frequency, used, parent, code){
@@ -36,7 +37,8 @@ for (i in alphabet){
 }
 if (count == 1){
     for (i in alphabet){
-        alphabet[i] = 0;
+        alphabet[i] = '0';
+        codesOfSymbols['0'] = i; 
         console.log('Коды символов:\n-', i, '0');
     }
 }
@@ -111,8 +113,9 @@ for (i in alphabet){
         j = tree[j].parent;
     } while ((tree[j].parent != null))
 
+    codesOfSymbols[codeOfSymb] = i;
     alphabet[i] = codeOfSymb;
-    console.log('-', i, alphabet[i])
+    console.log('-', i, codeOfSymb);
 }
 }
 
@@ -128,12 +131,9 @@ let decodedData = '';
 let symbol = ''
 for (i in codedData){
     symbol += codedData[i];
-    for (j in alphabet){
-        if (symbol == alphabet[j]){
-            decodedData += j;
-            symbol = '';
-            break
-        }
+    if (codesOfSymbols[symbol] != undefined){
+        decodedData += codesOfSymbols[symbol];
+        symbol = '';    
     }
 }
 console.log('• Раскодированная строка: ', decodedData)
