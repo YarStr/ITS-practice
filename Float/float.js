@@ -51,7 +51,7 @@ function toNormalisedNumber(number, signBit){
 function main(input){
     let signBit = '0';
 
-    //Число является ничем
+    //Число является числом
     if (isNumber(input)){
         //Проверка знака
         if (isNegative(input)){
