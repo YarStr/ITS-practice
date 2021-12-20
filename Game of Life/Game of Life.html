@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Game of Life</title>
+</head>
+<body style="background-color: #002137;">
+ 
+<canvas id="myCanvas" width="400px" height="400px" 
+style="position: relative; top: calc(50vh - 200px); left: calc(50vw - 200px); background-color: white;" >
+Your browser does not support the canvas element.
+</canvas>
+ 
+<script>
+	function neighborCount(x, y){
+        let count = 0;
+        for (let i = -1; i <= 1; i++){
+            for (let j = -1; j <= 1; j++){
+                if (i == 0 && j == 0){
+                    continue; 
+                }
+                else{
+                    count += currentField[ (x + i + fieldSize) % fieldSize ][ (y + j + fieldSize) % fieldSize ];
+                }
+            }
+		}   
+		return count; 
+	}
+
+	function nextGeneration(){
+		for (let i = 0; i < fieldSize; i++){
+			for (let j = 0; j < fieldSize; j++){
+				let neighbors = neighborCount(i, j);
+				
+				if (currentField[i][j] == 1){
+					if (neighbors == 2 || neighbors == 3)
+						nextField[i][j] = 1;
+					else
+						nextField[i][j] = 0;
+				} 
+				else {
+					if (neighbors == 3)
+						nextField[i][j] = 1;
+					else
+						nextField[i][j] = 0;
+				}
+			}
+		}
+
+		for (let i = 0; i < fieldSize; i++){
+			for (let j = 0; j < fieldSize; j++){
+				let temp = nextField[i][j];
+				currentField[i][j] = temp;
+			}
+		}
+		draw();
+	}
+
+	function draw(){
+		for(let i = 0; i < fieldSize; i++){
+			for(let j = 0; j < fieldSize; j++){
+				if (currentField[i][j] == 1){
+					ctx.fillStyle = "blue";
+					ctx.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
+					}
+				else{
+					ctx.fillStyle = "#FFFFFF";
+					ctx.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
+				}
+			}
+		}
+	}
+	
+	let canvas = document.getElementById("myCanvas");
+	let ctx = canvas.getContext("2d");
+
+	let fieldSize = 20; 
+	let cellSize = 20;
+	let currentField = new Array(fieldSize);
+	let nextField = new Array(fieldSize);
+
+	for (let i = 0; i < fieldSize; i++){
+		currentField[i] = new Array(fieldSize);
+		nextField[i] = new Array(fieldSize);
+	};
+ 
+	for (let i = 0; i < fieldSize; i++){
+		for (let j = 0; j < fieldSize; j++){
+			currentField[i][j] = 1 * (Math.random() > 0.5);
+			nextField[i][j] = 0;
+		}
+	}
+
+	/*//Генерация фигуры глайдер для тестов
+	currentField[0][1] = 1;
+	currentField[1][2] = 1;
+	currentField[2][2] = 1;
+	currentField[2][1] = 1;
+	currentField[2][0] = 1;
+	*/
+	draw();
+ 
+	let tm = setInterval(nextGeneration, 200);
+	</script>
+</body>
+</html>
